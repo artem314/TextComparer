@@ -1,0 +1,34 @@
+﻿<Window x:Class="TextComparer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TextComparer"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Button Content="Сравнить" Command="{Binding CompareCommand}" Margin="574,214,143,173"/>
+
+        <ListBox  ItemsSource="{Binding TextsList}"
+            Margin="10,10,223,151"
+                   SelectedItem="{Binding SelectedText}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="5">
+                        <TextBlock FontSize="18" Text="{Binding Path=Title}" />
+                        <!--<TextBlock Text="{Binding Path=Company}" />-->
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <TextBox Height="23" Margin="574,31,98,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top"/>
+        <TextBlock Margin="574,10,10,0" TextWrapping="Wrap" Text="Выбранный Текст" VerticalAlignment="Top"/>
+        <TextBox Height="23" Margin="574,80,98,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top"/>
+        <TextBlock Margin="574,59,98,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
+        <Button Content="+" Command="{Binding OpenCommand}" HorizontalAlignment="Left" Margin="10,273,0,0" VerticalAlignment="Top" Width="75" Height="42"/>
+
+    </Grid>
+</Window>

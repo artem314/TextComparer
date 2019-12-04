@@ -1,0 +1,15 @@
+C:\Users\artem\source\repos\TextComparer\TextComparer\bin\Debug\TextComparer.exe.config
+C:\Users\artem\source\repos\TextComparer\TextComparer\bin\Debug\TextComparer.exe
+C:\Users\artem\source\repos\TextComparer\TextComparer\bin\Debug\TextComparer.pdb
+C:\Users\artem\source\repos\TextComparer\TextComparer\obj\Debug\TextComparer.csprojAssemblyReference.cache
+C:\Users\artem\source\repos\TextComparer\TextComparer\obj\Debug\MainWindow.g.cs
+C:\Users\artem\source\repos\TextComparer\TextComparer\obj\Debug\App.g.cs
+C:\Users\artem\source\repos\TextComparer\TextComparer\obj\Debug\TextComparer_MarkupCompile.cache
+C:\Users\artem\source\repos\TextComparer\TextComparer\obj\Debug\TextComparer_MarkupCompile.lref
+C:\Users\artem\source\repos\TextComparer\TextComparer\obj\Debug\MainWindow.baml
+C:\Users\artem\source\repos\TextComparer\TextComparer\obj\Debug\TextComparer.g.resources
+C:\Users\artem\source\repos\TextComparer\TextComparer\obj\Debug\TextComparer.Properties.Resources.resources
+C:\Users\artem\source\repos\TextComparer\TextComparer\obj\Debug\TextComparer.csproj.GenerateResource.cache
+C:\Users\artem\source\repos\TextComparer\TextComparer\obj\Debug\TextComparer.csproj.CoreCompileInputs.cache
+C:\Users\artem\source\repos\TextComparer\TextComparer\obj\Debug\TextComparer.exe
+C:\Users\artem\source\repos\TextComparer\TextComparer\obj\Debug\TextComparer.pdb
