@@ -55,7 +55,23 @@ namespace TextComparer
             }
         }
 
-      
+
+        private RelayCommand removeCommand;
+        public RelayCommand RemoveCommand
+        {
+            get
+            {
+                return removeCommand ??
+                  (removeCommand = new RelayCommand(obj =>
+                  {
+                      if(SelectedText!=null)
+                      TextsList.Remove(SelectedText);
+                  }));
+            }
+        }
+
+        
+
         private List<string> StopWords { get; set; }
 
         private static bool NextCombination(IList<int> num, int n, int k)
@@ -101,6 +117,26 @@ namespace TextComparer
             } while (NextCombination(numbers, size, k));
         }
 
+        private double VectorMethod(List<int> vect1, List<int> vect2)
+        {
+            double scalar = 0;
+            double amod = 0;
+            double bmod = 0;
+
+            for(int i =0;i<vect1.Count;i++)
+            {
+                scalar = scalar + vect1[i] * vect2[i];
+
+                amod = amod + Math.Pow(vect1[i], 2);
+                bmod = bmod + Math.Pow(vect2[i], 2);
+            }
+            amod = Math.Sqrt(amod);
+            bmod = Math.Sqrt(bmod);
+
+            return  scalar / (amod * bmod);
+         
+        }
+
         /// <summary>
         /// проводит частотный анализ слов двух текстов, на выходе % совпавших
         /// </summary>
@@ -139,13 +175,16 @@ namespace TextComparer
             //}
                
 
-            for(int i=0;i < combs.Length;i++)
+            for(int i = 0;i < combs.Length;i++)
             {
                 string Statistic = "";
                 string writePath = "";
                 int s = 0;// количество ненулевых строк
                 List<double> p = new List<double>();
                 int[] indexes = combs[i];
+
+                List<int> vector1 = new List<int>();
+                List<int> vector2 = new List<int>();
 
                 foreach (var word in NormalizedTexts[indexes[0]].Table)
                 {
@@ -154,23 +193,29 @@ namespace TextComparer
                     {
                         Statistic = Statistic + word.Key + '\t' + word.Value + " " + Table2[word.Key] + '\n';
                         double pi = (double)Math.Min(word.Value, Table2[word.Key]) / (double)Math.Max(word.Value, Table2[word.Key]);
+                        vector1.Add(word.Value);
+                        vector2.Add(Table2[word.Key]);
                         p.Add(pi);
+
                         s++;
                     }
                 }
 
-                double pf = 0.5;
+                double pf = 0.3;
 
                 List<double> pSelected = new List<double>(p.FindAll(cfg => cfg <= pf));
                 double percentSame = (double)pSelected.Count * 100 / s;
 
-                writePath = writePath + TextsList[indexes[0]].Title + TextsList[indexes[1]].Title + ".txt";
+                writePath = writePath + TextsList[indexes[0]].Title +" " +TextsList[indexes[1]].Title + ".txt";
                 try
                 {
                     FileStream fs = new FileStream(writePath, FileMode.Create);
                     using (StreamWriter sw = new StreamWriter(fs))
                     {
-                        sw.Write("p=" + percentSame + '\n');
+                        sw.Write("Оригинальный метод: p=" + percentSame + '\n');
+                        sw.Write("Метод Косинусов: p=" + VectorMethod(vector1,vector2) + '\n');
+                        sw.Write("Количество слов" + '\n' + NormalizedTexts[indexes[0]].Table.Count + '\n');
+                        sw.Write(NormalizedTexts[indexes[1]].Table.Count + "\n\n");
                         sw.Write(Statistic);
                     }
                     Console.WriteLine("Запись выполнена");

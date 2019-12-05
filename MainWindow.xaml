@@ -8,12 +8,13 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="145*"/>
+            <ColumnDefinition Width="53*"/>
         </Grid.ColumnDefinitions>
-        <Button Content="Сравнить" Command="{Binding CompareCommand}" Margin="574,214,143,173"/>
+        <Button Content="Сравнить" Command="{Binding CompareCommand}" Margin="10,273,127,104" Grid.Column="1"/>
 
         <ListBox  ItemsSource="{Binding TextsList}"
-            Margin="10,10,223,151"
+            Margin="10,10,10,151"
                    SelectedItem="{Binding SelectedText}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -24,11 +25,10 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <TextBox Height="23" Margin="574,31,98,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top"/>
-        <TextBlock Margin="574,10,10,0" TextWrapping="Wrap" Text="Выбранный Текст" VerticalAlignment="Top"/>
-        <TextBox Height="23" Margin="574,80,98,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top"/>
-        <TextBlock Margin="574,59,98,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
-        <Button Content="+" Command="{Binding OpenCommand}" HorizontalAlignment="Left" Margin="10,273,0,0" VerticalAlignment="Top" Width="75" Height="42"/>
+        <TextBox Height="23" Margin="10,31,10,0" TextWrapping="Wrap" DataContext="{Binding SelectedText}" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Grid.Column="1"/>
+        <TextBlock Margin="10,10,10,0" TextWrapping="Wrap" Text="Выбранный Текст" VerticalAlignment="Top" Grid.Column="1"/>
+        <Button Content="+" Command="{Binding OpenCommand}" Margin="10,273,495,0" VerticalAlignment="Top" Height="42"/>
+        <Button Content="-" Command="{Binding RemoveCommand}" Margin="90,273,415,0" VerticalAlignment="Top" Height="42"/>
 
     </Grid>
 </Window>
