@@ -55,7 +55,6 @@ namespace TextComparer
             }
         }
 
-
         private RelayCommand removeCommand;
         public RelayCommand RemoveCommand
         {
@@ -70,73 +69,36 @@ namespace TextComparer
             }
         }
 
-        
-
         private List<string> StopWords { get; set; }
 
-        private static bool NextCombination(IList<int> num, int n, int k)
+        private List<int[]> Combinations = new List<int[]>();
+
+        void combinationUtil(int[] arr, int[] data, int start, int end, int index, int r)
         {
-            bool finished;
-
-            var changed = finished = false;
-
-            if (k <= 0) return false;
-
-            for (var i = k - 1; !finished && !changed; i--)
+            if (index == r)
             {
-                if (num[i] < n - 1 - (k - 1) + i)
+                int[] tmpArr = new int[data.Length];
+                for (int j = 0; j < r; j++)
                 {
-                    num[i]++;
-
-                    if (i < k - 1)
-                        for (var j = i + 1; j < k; j++)
-                            num[j] = num[j - 1] + 1;
-                    changed = true;
+                    tmpArr[j] = data[j];
                 }
-                finished = i == 0;
+                    
+                Combinations.Add(tmpArr);
+                return;
             }
 
-            return changed;
-        }
-
-        private static IEnumerable Combinations<T>(IEnumerable<T> elements, int k)
-        {
-            var elem = elements.ToArray();
-            var size = elem.Length;
-
-            if (k > size) yield break;
-
-            var numbers = new int[k];
-
-            for (var i = 0; i < k; i++)
-                numbers[i] = i;
-
-            do
+            for (int i = start; i <= end && end - i + 1 >= r - index; i++)
             {
-                yield return numbers.Select(n => elem[n]);
-            } while (NextCombination(numbers, size, k));
-        }
-
-        private double VectorMethod(List<int> vect1, List<int> vect2)
-        {
-            double scalar = 0;
-            double amod = 0;
-            double bmod = 0;
-
-            for(int i =0;i<vect1.Count;i++)
-            {
-                scalar = scalar + vect1[i] * vect2[i];
-
-                amod = amod + Math.Pow(vect1[i], 2);
-                bmod = bmod + Math.Pow(vect2[i], 2);
+                data[index] = arr[i];
+                combinationUtil(arr, data, i + 1,end, index + 1, r);
             }
-            amod = Math.Sqrt(amod);
-            bmod = Math.Sqrt(bmod);
-
-            return  scalar / (amod * bmod);
-         
         }
 
+        void Combination(int[] arr, int n, int r)
+        {
+            int[] data = new int[r];
+            combinationUtil(arr, data, 0, n - 1, 0, r);
+        }
         /// <summary>
         /// проводит частотный анализ слов двух текстов, на выходе % совпавших
         /// </summary>
@@ -148,63 +110,62 @@ namespace TextComparer
                 MessageBox.Show("Нужно выбрать как минимум 2 текста");
                 return;
             }
-                
-            List<NormText> NormalizedTexts = new List<NormText>();
 
+            int[] n = new int[TextsList.Count];
+            k = 0;
             foreach (Text text in TextsList)
             {
-                NormText normText = new NormText(StopWords,text.Content);
-                NormalizedTexts.Add(normText);
+                text.Normalize(StopWords);
+                n[k] = k;
+                k++;
             }
 
-            int k = 2;
-            int[] n = new int[NormalizedTexts.Count];
-            for(int i=0;i<n.GetLength(0);i++)
-            {
-                n[i] = i;
-            }
+            Combination(n, n.Length, 2);
 
-            int[][] combs = new int[1][];
-            combs[0] = new int[] { 0, 1 }; 
-            //k = 0;
-            //foreach (IEnumerable<int> i in Combinations(n, k))
-            //{
-            //    combs[k] = new int[2];
-            //    combs[k] = i;
-            //    k++;
-            //}
-               
-
-            for(int i = 0;i < combs.Length;i++)
+            for (int i = 0;i < Combinations.Count;i++)
             {
                 string Statistic = "";
                 string writePath = "";
-                int s = 0;// количество ненулевых строк
-                List<double> p = new List<double>();
-                int[] indexes = combs[i];
+                int[] indexes = Combinations[i];
+                TextComparator textComparator = new TextComparator(TextsList[indexes[0]].WordsNormal, TextsList[indexes[1]].WordsNormal);
 
-                List<int> vector1 = new List<int>();
-                List<int> vector2 = new List<int>();
+                double pcos =  textComparator.CosMethod();
+                Dictionary<Word, int[]> Table = textComparator.Table;
 
-                foreach (var word in NormalizedTexts[indexes[0]].Table)
+                foreach(var stat in Table)
                 {
-                    var Table2 = NormalizedTexts[indexes[1]].Table;
-                    if (Table2.ContainsKey(word.Key))
-                    {
-                        Statistic = Statistic + word.Key + '\t' + word.Value + " " + Table2[word.Key] + '\n';
-                        double pi = (double)Math.Min(word.Value, Table2[word.Key]) / (double)Math.Max(word.Value, Table2[word.Key]);
-                        vector1.Add(word.Value);
-                        vector2.Add(Table2[word.Key]);
-                        p.Add(pi);
-
-                        s++;
-                    }
+                    Statistic = Statistic + stat.Key.sourceWord + "    " + stat.Value[0] + "   " + stat.Value[1] + '\n';
                 }
 
-                double pf = 0.3;
+                //int s = 0;// количество ненулевых строк
+                //List<double> p = new List<double>();
+                //int[] indexes = combs[i];
 
-                List<double> pSelected = new List<double>(p.FindAll(cfg => cfg <= pf));
-                double percentSame = (double)pSelected.Count * 100 / s;
+                //List<int> vector1 = new List<int>();
+                //List<int> vector2 = new List<int>();
+
+                //var Table1 = TextsList[indexes[0]].Table;
+                //var Table2 = TextsList[indexes[1]].Table;
+
+                //foreach (var word in Table1)
+                //{
+
+                //    if (Table2.ContainsKey(word.Key))
+                //    {
+                //        if(word.Value.count > 1 && Table2[word.Key].count >1)
+                //        {
+                //            Statistic = Statistic + word.Value.sourceWord + '\t' + word.Value.count + " " + Table2[word.Key].count + '\n';
+                //            double pi = (double)Math.Min(word.Value.count, Table2[word.Key].count) / (double)Math.Max(word.Value.count, Table2[word.Key].count);
+                //            vector1.Add(word.Value.count);
+                //            vector2.Add(Table2[word.Key].count);
+                //            p.Add(pi);
+                //            s++;
+                //        }
+                //    }
+                //}
+
+
+                // double percentSame = ;
 
                 writePath = writePath + TextsList[indexes[0]].Title +" " +TextsList[indexes[1]].Title + ".txt";
                 try
@@ -212,10 +173,8 @@ namespace TextComparer
                     FileStream fs = new FileStream(writePath, FileMode.Create);
                     using (StreamWriter sw = new StreamWriter(fs))
                     {
-                        sw.Write("Оригинальный метод: p=" + percentSame + '\n');
-                        sw.Write("Метод Косинусов: p=" + VectorMethod(vector1,vector2) + '\n');
-                        sw.Write("Количество слов" + '\n' + NormalizedTexts[indexes[0]].Table.Count + '\n');
-                        sw.Write(NormalizedTexts[indexes[1]].Table.Count + "\n\n");
+                        //sw.Write("Оригинальный метод: p=" + percentSame + '\n');
+                        sw.Write("Метод Косинусов: p=" + pcos.ToString("0.000") + '\n');
                         sw.Write(Statistic);
                     }
                     Console.WriteLine("Запись выполнена");
@@ -273,8 +232,6 @@ namespace TextComparer
                   }));
             }
         }
-    
-        //private string[] words;
 
         private async Task LoadWordListAsync()
         {
@@ -288,47 +245,15 @@ namespace TextComparer
                     StopWords.Add(line);
                 }
             }
-
-            //words = new string[221];
-
-            //using (StreamReader sr = new StreamReader(path, System.Text.Encoding.UTF8))
-            //{
-            //    int k = 0;
-            //    string line;
-            //    while ((line = await sr.ReadLineAsync()) != null)
-            //    {
-            //        words[k] = line;
-            //        k++;
-            //    }
-            //}
-
-            //IEnumerable<string> duplicates = words.Intersect(words);
-            //try
-            //{
-            //    using (StreamWriter sw = new StreamWriter(path1, true, System.Text.Encoding.UTF8))
-            //    {
-            //        foreach(string str in duplicates)
-            //        {
-            //            await sw.WriteLineAsync(str);
-            //        }
-
-            //    }
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine(e.Message);
-            //}
-
         }
         public ApplicationViewModel(IDialogService dialogService, IFileService fileService)
         {
             StopWords = new List<string>();
             TextsList = new ObservableCollection<Text>();
             LoadWordListAsync();
-
+            
             this.dialogService = dialogService;
             this.fileService = fileService;
-
         }
 
         //static int[] GetPrefix(string s)

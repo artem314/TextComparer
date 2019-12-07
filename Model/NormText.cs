@@ -13,6 +13,7 @@ namespace TextComparer
         private List<string> StopWords { get; set; }
         public Dictionary<string, int> Table { get; set; }
         private string _sourceText { get; set; }
+
         public NormText(List<string> list,string SourceText)
         {
             StopWords = list;

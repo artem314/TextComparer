@@ -60,8 +60,10 @@
     <Compile Include="IDialogService.cs" />
     <Compile Include="IFileService.cs" />
     <Compile Include="Model\NormText.cs" />
+    <Compile Include="Model\Porter.cs" />
     <Compile Include="Model\RelayCommand.cs" />
     <Compile Include="Model\Text.cs" />
+    <Compile Include="Model\TextComparator.cs" />
     <Compile Include="Model\TxtFileService.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -78,6 +80,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\Word.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
