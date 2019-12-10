@@ -174,7 +174,10 @@ namespace TextComparer
                     using (StreamWriter sw = new StreamWriter(fs))
                     {
                         //sw.Write("Оригинальный метод: p=" + percentSame + '\n');
-                        sw.Write("Метод Косинусов: p=" + pcos.ToString("0.000") + '\n');
+                        sw.WriteLine("Количество слов");
+                        sw.WriteLine(TextsList[indexes[0]].Title +" : " + TextsList[indexes[0]].WordsNormal.Count);
+                        sw.WriteLine(TextsList[indexes[1]].Title + " : " + TextsList[indexes[1]].WordsNormal.Count);
+                        sw.Write("Метод Косинусов: p=" + pcos.ToString("0.000") + "\n\n");
                         sw.Write(Statistic);
                     }
                     Console.WriteLine("Запись выполнена");

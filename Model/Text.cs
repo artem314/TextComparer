@@ -77,7 +77,7 @@ namespace TextComparer
             }
 
             string reg = "[0-9]*";
-            var numb = words
+            words = words
            .Select(x => Regex.Replace(x, reg, ""))
            .ToList();
 
@@ -89,8 +89,8 @@ namespace TextComparer
             {
                 Word word = new Word();
                 word.sourceWord = str;
+                word.stemmedWord = Porter.TransformingWord(str);
                 wordsList.Add(word);
-
             }
 
             return wordsList;
