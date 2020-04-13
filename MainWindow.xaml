@@ -20,7 +20,6 @@
                 <DataTemplate>
                     <StackPanel Margin="5">
                         <TextBlock FontSize="18" Text="{Binding Path=Title}" />
-                        <!--<TextBlock Text="{Binding Path=Company}" />-->
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>

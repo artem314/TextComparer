@@ -103,7 +103,7 @@ namespace TextComparer
         /// проводит частотный анализ слов двух текстов, на выходе % совпавших
         /// </summary>
         /// <param name=""></param>
-        private void CompareText()
+        private async void CompareText()
         {
             if (TextsList.Count < 2)
             {
@@ -129,44 +129,20 @@ namespace TextComparer
                 int[] indexes = Combinations[i];
                 TextComparator textComparator = new TextComparator(TextsList[indexes[0]].WordsNormal, TextsList[indexes[1]].WordsNormal);
 
-                double pcos =  textComparator.CosMethod();
-                Dictionary<Word, int[]> Table = textComparator.Table;
+                Task<double> tCos = Task<double>.Run(()=> textComparator.CosMethod());
+                Task<double> tCustom = Task<double>.Run(() => textComparator.CustomMethod());
+
+                await Task.WhenAll(new[] { tCos, tCustom });
+
+                double pCos = tCos.Result;//  textComparator.CosMethod();
+                double CustomMethod = tCustom.Result;
+                
+                Dictionary<Word, double[]> Table = textComparator.Table;
 
                 foreach(var stat in Table)
                 {
                     Statistic = Statistic + stat.Key.sourceWord + "    " + stat.Value[0] + "   " + stat.Value[1] + '\n';
                 }
-
-                //int s = 0;// количество ненулевых строк
-                //List<double> p = new List<double>();
-                //int[] indexes = combs[i];
-
-                //List<int> vector1 = new List<int>();
-                //List<int> vector2 = new List<int>();
-
-                //var Table1 = TextsList[indexes[0]].Table;
-                //var Table2 = TextsList[indexes[1]].Table;
-
-                //foreach (var word in Table1)
-                //{
-
-                //    if (Table2.ContainsKey(word.Key))
-                //    {
-                //        if(word.Value.count > 1 && Table2[word.Key].count >1)
-                //        {
-                //            Statistic = Statistic + word.Value.sourceWord + '\t' + word.Value.count + " " + Table2[word.Key].count + '\n';
-                //            double pi = (double)Math.Min(word.Value.count, Table2[word.Key].count) / (double)Math.Max(word.Value.count, Table2[word.Key].count);
-                //            vector1.Add(word.Value.count);
-                //            vector2.Add(Table2[word.Key].count);
-                //            p.Add(pi);
-                //            s++;
-                //        }
-                //    }
-                //}
-
-
-                // double percentSame = ;
-
                 writePath = writePath + TextsList[indexes[0]].Title +" " +TextsList[indexes[1]].Title + ".txt";
                 try
                 {
@@ -177,10 +153,10 @@ namespace TextComparer
                         sw.WriteLine("Количество слов");
                         sw.WriteLine(TextsList[indexes[0]].Title +" : " + TextsList[indexes[0]].WordsNormal.Count);
                         sw.WriteLine(TextsList[indexes[1]].Title + " : " + TextsList[indexes[1]].WordsNormal.Count);
-                        sw.Write("Метод Косинусов: p=" + pcos.ToString("0.000") + "\n\n");
+                        sw.Write("Метод Косинусов: p=" + pCos.ToString("0.000") + "\n");
+                        sw.Write("Авторский метод: p=" + CustomMethod.ToString("0.000") + "\n\n");
                         sw.Write(Statistic);
                     }
-                    Console.WriteLine("Запись выполнена");
                 }
                 catch (Exception e)
                 {
@@ -190,36 +166,6 @@ namespace TextComparer
             }
 
             MessageBox.Show("Сравнение завершено");
-            //foreach (var word in NormalizedTexts[0].Table)
-            //{
-            //    checkWords(NormalizedTexts, word.Key);
-            //    if (Table2.ContainsKey(word.Key))
-            //    {
-            //        Statistic = Statistic + word.Key + "\t\t\t\t" + word.Value + " " + Table2[word.Key] + '\n';
-            //        double pi = (double)Math.Min(word.Value, Table2[word.Key]) / (double)Math.Max(word.Value, Table2[word.Key]);
-            //        p.Add(pi);
-            //        s++;
-            //    }
-            //}
-
-            //try
-            //{
-            //    using (StreamWriter sw = new StreamWriter(writePath, false, System.Text.Encoding.UTF8))
-            //    {
-            //        sw.WriteLine(Statistic);
-            //    }
-            //    Console.WriteLine("Запись выполнена");
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine(e.Message);
-            //}
-
-            //double pf = 0.5;
-
-            //List<double> pSelected = new List<double>(p.FindAll(cfg => cfg <= pf));
-            //double percentSame = (double)pSelected.Count * 100 / s;
-
         }
 
     private int k { get; set; }
